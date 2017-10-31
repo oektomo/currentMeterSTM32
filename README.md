@@ -10,7 +10,10 @@ we activate the UART and ADC
 - [ ] Enable the Timer to trigger the ADC  
 - [ ] do ADC scan conversion mode  
 - [ ] update the platform_config.h  
-  
+
+Note:
+Since we use newlib-nano please becarefull when using printf to print from float data type, it takes so much computation power and storage.  
+    
 PC software:  
 write to *.txt file  
 
