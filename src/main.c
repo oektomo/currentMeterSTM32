@@ -41,15 +41,17 @@ main(int argc, char* argv[])
 	USART_InitTypeDef USART_InitStructure;
 	initUART(&USART_InitStructure);
 	ADC_InitTypeDef ADC_InitStructure;
-	initADC(&ADC_InitStructure);
+	initADC(ADC1, &ADC_InitStructure);
 
 	  NVIC_Config();
 
 	  USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
+	  uint16_t data;
 
   while (1)
     {
-       // Add your code here.
+       data = getADCConv(ADC1);
+       uart_printf("ADC1 %u\n\r", data);
     }
 }
 

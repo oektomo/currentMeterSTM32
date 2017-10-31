@@ -10,6 +10,8 @@
 
 #include "stm32f10x_adc.h"
 
-void initADC(ADC_InitTypeDef* ADC_InitStructure);
+void initADC(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure);
+void initGPIO_ADC();
+uint16_t getADCConv(ADC_TypeDef* ADCx);
 
 #endif /* ADC_H_ */
