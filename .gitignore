@@ -1,0 +1,8 @@
+.cproject
+.project
+system
+ldscripts
+.settings/
+Release/
+Debug/
+
