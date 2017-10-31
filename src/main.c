@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "diag/Trace.h"
 #include "uart.h"
+#include "adc.h"
 #include "interrupt.h"
 #include "platform_config.h"
 
@@ -39,6 +40,8 @@ main(int argc, char* argv[])
   // at high speed.
 	USART_InitTypeDef USART_InitStructure;
 	initUART(&USART_InitStructure);
+	ADC_InitTypeDef ADC_InitStructure;
+	initADC(&ADC_InitStructure);
 
 	  NVIC_Config();
 

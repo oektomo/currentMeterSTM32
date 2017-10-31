@@ -1,9 +1,9 @@
 # Current Meter  
  
-this project are created for detecting current meter    
+This project are created as a current meter in ZXCT1009   
 we activate the UART and ADC  
 - [x] Enable the UART  
-- [ ] Enable the ADC  
+- [ ] Enable the ADC in Progress  
 - [ ] update the platform_config.h  
   
 PC software:  
