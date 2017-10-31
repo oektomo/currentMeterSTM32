@@ -47,11 +47,16 @@ main(int argc, char* argv[])
 
 	  USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
 	  uint16_t data;
+	  float volt;
 
   while (1)
     {
        data = getADCConv(ADC1);
-       uart_printf("ADC1 %u\n\r", data);
+       // manually start the convertion after get the Data
+       ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+       volt = (float) data;
+       volt = volt*3.3/2048;
+       uart_printf("ADC1 %.2f\n\r", volt);
     }
 }
 

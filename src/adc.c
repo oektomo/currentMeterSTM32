@@ -19,7 +19,7 @@ void initADC(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 
 	ADC_InitStructure->ADC_Mode = ADC_Mode_Independent;
 	ADC_InitStructure->ADC_ScanConvMode = DISABLE;
-	ADC_InitStructure->ADC_ContinuousConvMode = ENABLE;
+	ADC_InitStructure->ADC_ContinuousConvMode = DISABLE;
 	ADC_InitStructure->ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitStructure->ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure->ADC_NbrOfChannel = 1;
@@ -54,7 +54,7 @@ void initGPIO_ADC()
 uint16_t getADCConv(ADC_TypeDef* ADCx)
 {
 	uint16_t data = 0;
-	if ( ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) )
-		data = ADCx->DR;
+	while ( !ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) );
+	data = ADCx->DR;
 	return data;
 }
