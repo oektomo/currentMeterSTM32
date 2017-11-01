@@ -54,6 +54,19 @@ void initTimerGPIO(GPIO_InitTypeDef* GPIO_InitStructure)
 
 }
 
+void initTimerADC(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStructure)
+{
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	uint16_t CCR1_VAL = 10;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+	uint16_t PrescalerValue =(uint16_t) (SystemCoreClock / 24000000) - 1;
+	TIM_TimeBaseStructure.TIM_Period = 665;
+	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+}
+
 void saturate(uint16_t min, uint16_t max, uint16_t* data)
 {
 	if((*data) > max) {

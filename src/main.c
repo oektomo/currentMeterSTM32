@@ -37,24 +37,24 @@
 int
 main(int argc, char* argv[])
 {
-  // At this stage the system clock should have already been configured
-  // at high speed.
 	USART_InitTypeDef USART_InitStructure;
-	initUART(&USART_InitStructure);
 	ADC_InitTypeDef ADC_InitStructure;
-	initADC(ADC1, &ADC_InitStructure);
 	TIM_OCInitTypeDef TIM_OCInitStructure;
+
+	initUART(&USART_InitStructure);
+	initADC(ADC1, &ADC_InitStructure);
 	initTimer(TIM3, &TIM_OCInitStructure);
 
-	  NVIC_Config();
+	NVIC_Config();
 
-	  USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
-	  uint16_t data, outputPWM;
-	  TIM_SetCompare1(TIM3, 665);
-	  float volt;
+	USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
+	uint16_t data, outputPWM;
+	float volt;
 
-  while (1)
+    while (1)
     {
+#ifdef AS_DUMMY_LOAD
+
        data = getADCConv(ADC1);
        // manually start the convertion after get the Data
        ADC_SoftwareStartConvCmd(ADC1, ENABLE);
@@ -63,6 +63,17 @@ main(int argc, char* argv[])
        TIM_SetCompare1(TIM3, outputPWM);
        volt = volt*3.3/4096;
        uart_printf("ADC1 %.2f PWM: %u\n\r", volt, outputPWM*100/665);
+#endif
+
+#ifdef DC_BOOSTER
+       data = getADCConv(ADC1);
+#endif
+
+#ifdef CHARGER
+#endif
+
+#ifdef DISCHARGER
+#endif
     }
 }
 
