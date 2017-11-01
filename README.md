@@ -1,4 +1,4 @@
-# Current Meter  
+# Current Meter in STM32F103C8T 
  
 This project are created as a current meter in ZXCT1009   
 activate 2 ADC to read current and voltage. then, calculate the discharge or recharge transistor duty cycle.
