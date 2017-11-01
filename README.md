@@ -1,7 +1,11 @@
 # Current Meter  
  
 This project are created as a current meter in ZXCT1009   
+activate 2 ADC to read current and voltage. then, calculate the discharge or recharge transistor duty cycle.
+perhaps we need to see MOSFET and trying timer as PWM.
 we activate the UART and ADC  
+remove timer stdperiph source file from disabled filter.  
+
 - [x] Enable the UART  
 - [x] Enable the ADC free running  
 - [x] Trying single conversion
