@@ -10,6 +10,7 @@
 #include "diag/Trace.h"
 #include "uart.h"
 #include "adc.h"
+#include "timer.h"
 #include "interrupt.h"
 #include "platform_config.h"
 
@@ -42,11 +43,14 @@ main(int argc, char* argv[])
 	initUART(&USART_InitStructure);
 	ADC_InitTypeDef ADC_InitStructure;
 	initADC(ADC1, &ADC_InitStructure);
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	initTimer(TIM3, &TIM_OCInitStructure);
 
 	  NVIC_Config();
 
 	  USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
-	  uint16_t data;
+	  uint16_t data, outputPWM;
+	  TIM_SetCompare1(TIM3, 665);
 	  float volt;
 
   while (1)
@@ -55,8 +59,10 @@ main(int argc, char* argv[])
        // manually start the convertion after get the Data
        ADC_SoftwareStartConvCmd(ADC1, ENABLE);
        volt = (float) data;
-       volt = volt*3.3/2048;
-       uart_printf("ADC1 %.2f\n\r", volt);
+       outputPWM = data * 650 / 4096;
+       TIM_SetCompare1(TIM3, outputPWM);
+       volt = volt*3.3/4096;
+       uart_printf("ADC1 %.2f PWM: %u\n\r", volt, outputPWM*100/665);
     }
 }
 

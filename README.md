@@ -1,4 +1,4 @@
-# Current Meter in STM32F103C8T 
+# Current Meter in STM32F103C8T in form known as blue pill
  
 This project are created as a current meter in ZXCT1009   
 activate 2 ADC to read current and voltage. then, calculate the discharge or recharge transistor duty cycle.
@@ -14,6 +14,7 @@ remove timer stdperiph source file from disabled filter.
 - [ ] Enable the Timer to trigger the ADC  
 - [ ] do ADC scan conversion mode  
 - [ ] update the platform_config.h  
+- [x] configure PWM at Timer3 channel1  
 
   
   ## About github
@@ -21,7 +22,8 @@ remove timer stdperiph source file from disabled filter.
 
 Note:
 Since we use newlib-nano please becarefull when using printf to print from float data type, it takes so much computation power and storage.  
-    
+![newlib-nano printf](docs/printfnewlib.png)  
+  
 PC software:  
 write to *.txt file  
 
