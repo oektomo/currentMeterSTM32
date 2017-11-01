@@ -15,6 +15,10 @@ remove timer stdperiph source file from disabled filter.
 - [ ] do ADC scan conversion mode  
 - [ ] update the platform_config.h  
 
+  
+  ## About github
+  create a new issue and track it
+
 Note:
 Since we use newlib-nano please becarefull when using printf to print from float data type, it takes so much computation power and storage.  
     
