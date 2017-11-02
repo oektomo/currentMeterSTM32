@@ -29,6 +29,7 @@ void initUART(USART_InitTypeDef* USART_InitStructure)
 
 	  USART_InitStructure->USART_BaudRate = 115200;
 	  USART_InitStructure->USART_BaudRate = 921600; // top speed Serial 2 USB can handle
+	  USART_InitStructure->USART_BaudRate = 460800; // stable reading
 	  USART_InitStructure->USART_WordLength = USART_WordLength_8b;
 	  USART_InitStructure->USART_StopBits = USART_StopBits_1;
 	  USART_InitStructure->USART_Parity = USART_Parity_No;

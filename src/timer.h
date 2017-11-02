@@ -13,6 +13,7 @@
 
 void initTimer(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStructure);
 void initTimerGPIO(GPIO_InitTypeDef* GPIO_InitStructure);
+void initTimerADC(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStructure);
 void saturate(uint16_t min, uint16_t max, uint16_t* data);
 
 #endif /* TIMER_H_ */

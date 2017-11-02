@@ -29,6 +29,11 @@ NVIC_Config(void)
 	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
+#ifdef DC_BOOSTER
+	NVIC_InitStruct.NVIC_IRQChannel = TIM1_CC_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
+#endif
 }
 
 /*
@@ -60,3 +65,12 @@ USART3_IRQHandler(void)
 
 	}
 }
+
+#ifdef DC_BOOSTER
+void
+TIM1_CC_IRQHandler(void)
+{
+	//uart_printf("T");
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+}
+#endif

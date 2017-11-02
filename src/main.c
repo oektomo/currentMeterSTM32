@@ -1,6 +1,6 @@
 //
-// This file is part of the GNU ARM Eclipse distribution.
-// Copyright (c) 2014 Liviu Ionescu.
+//
+//
 //
 
 // ----------------------------------------------------------------------------
@@ -42,14 +42,29 @@ main(int argc, char* argv[])
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 
 	initUART(&USART_InitStructure);
+	USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
+	USART_SendString(USARTrPi, "UART Started\n\r");
+	uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
+#ifdef AS_DUMMY_LOAD
 	initADC(ADC1, &ADC_InitStructure);
+#endif
+#ifdef DC_BOOSTER
+	initADCTimTrigger(ADC1, &ADC_InitStructure);
+	uart_printf("ADC started\n\r");
+	initTimerADC(TIM1, &TIM_OCInitStructure);
+	uart_printf("Timer1 started\n\r");
+#endif
 	initTimer(TIM3, &TIM_OCInitStructure);
+	uart_printf("Timer3 started\n\r");
 
 	NVIC_Config();
+	uart_printf("NVIC started\n\r");
 
-	USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
 	uint16_t data, outputPWM;
 	float volt;
+	uint32_t counter = 0;
+	uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
+	uart_printf("LOOP START\n\r");
 
     while (1)
     {
@@ -62,11 +77,22 @@ main(int argc, char* argv[])
        outputPWM = data * 650 / 4096;
        TIM_SetCompare1(TIM3, outputPWM);
        volt = volt*3.3/4096;
-       uart_printf("ADC1 %.2f PWM: %u\n\r", volt, outputPWM*100/665);
+       uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/665);
+       counter++;
 #endif
 
 #ifdef DC_BOOSTER
+       uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
        data = getADCConv(ADC1);
+       //data = TIM_GetCounter(TIM1);
+       ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+       volt = (float) data;
+	   outputPWM = data * 650 / 4096;
+	   TIM_SetCompare1(TIM3, outputPWM);
+	   volt = volt*3.3/4096;
+	   uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/665);
+	   //uart_printf("%u ADC1 %.2f TIM1 counter: %u\n\r", counter, volt, data);
+	   counter++;
 #endif
 
 #ifdef CHARGER

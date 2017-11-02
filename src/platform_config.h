@@ -12,8 +12,8 @@
 
 #define INLINE_CODE
 //#define USE_TRACE
-#define AS_DUMMY_LOAD
-//#define DC_BOOSTER
+//#define AS_DUMMY_LOAD
+#define DC_BOOSTER
 //#define CHARGER
 //#define DISCHARGER
 
@@ -43,6 +43,9 @@
   #define USARTdbg_TxPin             GPIO_Pin_2
   #define USARTdbg_IRQn              USART2_IRQn
   #define USARTdbg_IRQHandler        USART2_IRQHandler
+
+#define ADC_CLK_APB2		RCC_APB2Periph_ADC1
+#define ADC_GPIO_CLK_APB2	RCC_APB2Periph_GPIOA
 
 #define INPUT_PB_CLK_APB2	RCC_APB2Periph_GPIOB
 #define INPUT_PA_CLK_APB2	RCC_APB2Periph_GPIOA
