@@ -5,8 +5,8 @@
  *      Author: otm
  */
 
-#ifndef TIMER_H_
-#define TIMER_H_
+#ifndef TIMER_CONFIG_H_
+#define TIMER_CONFIG_H_
 
 #include "stm32f10x_tim.h"
 #include "stm32f10x_gpio.h"

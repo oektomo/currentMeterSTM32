@@ -29,7 +29,7 @@ NVIC_Config(void)
 	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
-#ifdef DC_BOOSTER
+#ifdef DC_BOOSTER_TIM
 	NVIC_InitStruct.NVIC_IRQChannel = TIM1_CC_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
@@ -46,8 +46,8 @@ USART1_IRQHandler(void)
 	if( USART_GetITStatus(USARTrPi, USART_IT_RXNE) ) {
 		uint8_t RxBuffer = USART_ReceiveData(USARTrPi);
 		USART_Tx(USARTm8, RxBuffer);
-		RxBuffer++;
-		//USART_Tx(USARTrPi, RxBuffer);
+		//RxBuffer++;
+		USART_Tx(USARTrPi, RxBuffer);
 
 	}
 }
@@ -70,7 +70,7 @@ USART3_IRQHandler(void)
 void
 TIM1_CC_IRQHandler(void)
 {
-	//uart_printf("T");
+	uart_printf("T");
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 #endif

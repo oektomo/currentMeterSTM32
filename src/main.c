@@ -1,18 +1,16 @@
-//
-//
-//
-//
-
 // ----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "diag/Trace.h"
+#include "Timer.h"
 #include "uart.h"
 #include "adc.h"
-#include "timer.h"
+#include "timerConfig.h"
 #include "interrupt.h"
 #include "platform_config.h"
+
+#define PERIOD  (TIMER_FREQUENCY_HZ * 100 / 1000)
 
 // ----------------------------------------------------------------------------
 //
@@ -33,6 +31,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
+extern volatile timer_ticks_t timer_delayCount;
 
 int
 main(int argc, char* argv[])
@@ -45,14 +44,22 @@ main(int argc, char* argv[])
 	USART_SendString(USARTrPi, "Current Meter Started v0.2 \n\r");
 	USART_SendString(USARTrPi, "UART Started\n\r");
 	uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
+	//uint32_t seconds = 0;
 #ifdef AS_DUMMY_LOAD
 	initADC(ADC1, &ADC_InitStructure);
 #endif
 #ifdef DC_BOOSTER
+	timer_start();
 	initADCTimTrigger(ADC1, &ADC_InitStructure);
 	uart_printf("ADC started\n\r");
 	initTimerADC(TIM1, &TIM_OCInitStructure);
 	uart_printf("Timer1 started\n\r");
+#endif
+
+#ifdef CHARGER
+	timer_start();
+	initADCScan(ADC1, &ADC_InitStructure);
+	uart_printf("ADC started\n\r");
 #endif
 	initTimer(TIM3, &TIM_OCInitStructure);
 	uart_printf("Timer3 started\n\r");
@@ -60,12 +67,15 @@ main(int argc, char* argv[])
 	NVIC_Config();
 	uart_printf("NVIC started\n\r");
 
-	uint16_t data, outputPWM;
+	uint16_t data, data2, outputPWM;
 	float volt;
 	uint32_t counter = 0;
 	uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
-	uart_printf("LOOP START\n\r");
+	uart_printf("LOOP STARTing\n\r");
 
+	timer_start();
+	timer_delayCount = 0;
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     while (1)
     {
 #ifdef AS_DUMMY_LOAD
@@ -77,25 +87,46 @@ main(int argc, char* argv[])
        outputPWM = data * 650 / 4096;
        TIM_SetCompare1(TIM3, outputPWM);
        volt = volt*3.3/4096;
-       uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/665);
+       uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/650);
        counter++;
 #endif
 
 #ifdef DC_BOOSTER
-       uart_printf("TIM1_BDTR %04x\n\r",TIM1->BDTR);
        data = getADCConv(ADC1);
        //data = TIM_GetCounter(TIM1);
+       uart_printf("timer: %u\n\r",timer_delayCount);
+
+       check_timer();
+       timer_set (PERIOD);
        ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-       volt = (float) data;
 	   outputPWM = data * 650 / 4096;
 	   TIM_SetCompare1(TIM3, outputPWM);
+#define AJAIB
+#ifdef AJAIB
+       volt = (float) data;
 	   volt = volt*3.3/4096;
-	   uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/665);
+	   uart_printf("%u ADC1 %.2f PWM: %u\n\r", counter, volt, outputPWM*100/650);
 	   //uart_printf("%u ADC1 %.2f TIM1 counter: %u\n\r", counter, volt, data);
+#endif
 	   counter++;
 #endif
 
 #ifdef CHARGER
+       data = getADCConv(ADC1);
+       ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+       data2 = getADCConv(ADC1);
+
+       uart_printf("timer: %u\n\r",timer_delayCount);
+
+       check_timer();
+       timer_set (PERIOD);
+       ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+	   outputPWM = data * 650 / 4096;
+	   TIM_SetCompare1(TIM3, outputPWM);
+
+       volt = (float) data;
+	   volt = volt*3.3/4096;
+	   uart_printf("%u ADC1 %.2f ADC2 %u PWM: %u\n\r", counter, volt, data2, outputPWM*100/650);
 #endif
 
 #ifdef DISCHARGER

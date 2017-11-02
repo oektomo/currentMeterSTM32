@@ -13,8 +13,8 @@
 #define INLINE_CODE
 //#define USE_TRACE
 //#define AS_DUMMY_LOAD
-#define DC_BOOSTER
-//#define CHARGER
+//#define DC_BOOSTER
+#define CHARGER
 //#define DISCHARGER
 
   #define USARTrPi                   USART1

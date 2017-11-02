@@ -4,7 +4,7 @@
  *  Created on: Nov 1, 2017
  *      Author: otm
  */
-#include "timer.h"
+#include "timerConfig.h"
 
 /*
  * Enable timer 3 as PWM?

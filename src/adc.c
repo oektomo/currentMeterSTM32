@@ -36,16 +36,10 @@ void initADC(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 	ADC_SoftwareStartConvCmd(ADCx, ENABLE);
 }
 
+#define ADC_CAL
 void initADCTimTrigger(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 {
 
-#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL)
-  /* ADCCLK = PCLK2/2 */
-  RCC_ADCCLKConfig(RCC_PCLK2_Div2);
-#else
-  /* ADCCLK = PCLK2/4 */
-  RCC_ADCCLKConfig(RCC_PCLK2_Div4);
-#endif
 	initGPIO_ADC();
 	RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -53,8 +47,7 @@ void initADCTimTrigger(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 	ADC_InitStructure->ADC_Mode = ADC_Mode_Independent;
 	ADC_InitStructure->ADC_ScanConvMode = DISABLE;
 	ADC_InitStructure->ADC_ContinuousConvMode = DISABLE;
-	ADC_InitStructure->ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
-	//ADC_InitStructure->ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStructure->ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitStructure->ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure->ADC_NbrOfChannel = 1;
 	ADC_Init(ADCx, ADC_InitStructure);
@@ -62,8 +55,9 @@ void initADCTimTrigger(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 	// let's see what is rank means and what is ADC sample time?
 	ADC_RegularChannelConfig(ADCx, ADC_Channel_0, 1, ADC_SampleTime_28Cycles5);
 	//ADC_RegularChannelConfig(ADCx, ADC_Channel_0, 1, ADC_SampleTime_13Cycles5);
-	ADC_ExternalTrigConvCmd(ADCx, ENABLE);
+	//ADC_ExternalTrigConvCmd(ADCx, ENABLE);
 	ADC_Cmd(ADCx, ENABLE);
+
 #ifdef ADC_CAL
 	  /* Enable ADC1 reset calibration register */
 	  ADC_ResetCalibration(ADCx);
@@ -76,6 +70,41 @@ void initADCTimTrigger(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
 	  while(ADC_GetCalibrationStatus(ADCx));
 #endif
 	//ADC_SoftwareStartConvCmd(ADCx, ENABLE);
+}
+
+void initADCScan(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStructure)
+{
+	initGPIO_ADC();
+	initGPIO2_ADC();
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+
+	ADC_InitStructure->ADC_Mode = ADC_Mode_Independent;
+	ADC_InitStructure->ADC_ScanConvMode = ENABLE;
+	ADC_InitStructure->ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStructure->ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStructure->ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure->ADC_NbrOfChannel = 2;
+	ADC_Init(ADCx, ADC_InitStructure);
+
+	// let's see what is rank means and what is ADC sample time?
+	ADC_RegularChannelConfig(ADCx, ADC_Channel_0, 1, ADC_SampleTime_41Cycles5);
+	ADC_RegularChannelConfig(ADCx, ADC_Channel_1, 2, ADC_SampleTime_41Cycles5);
+	//ADC_RegularChannelConfig(ADCx, ADC_Channel_0, 1, ADC_SampleTime_13Cycles5);
+	//ADC_ExternalTrigConvCmd(ADCx, ENABLE);
+	ADC_Cmd(ADCx, ENABLE);
+
+#ifdef ADC_CAL
+	  /* Enable ADC1 reset calibration register */
+	  ADC_ResetCalibration(ADCx);
+	  /* Check the end of ADC1 reset calibration register */
+	  while(ADC_GetResetCalibrationStatus(ADCx));
+
+	  /* Start ADC1 calibration */
+	  ADC_StartCalibration(ADCx);
+	  /* Check the end of ADC1 calibration */
+	  while(ADC_GetCalibrationStatus(ADCx));
+#endif
 }
 
 /*
@@ -91,6 +120,15 @@ void initGPIO_ADC()
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
+void initGPIO2_ADC()
+{
+	RCC_APB2PeriphClockCmd(ADC_GPIO_CLK_APB2, ENABLE);
+
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
 /*
  * return the ADC converted data
  */
